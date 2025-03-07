@@ -19,4 +19,21 @@ public class UserServiceImpl implements UserService {
         System.out.println(user);
         return user;
     }
+
+    @Override
+    public Integer insertUser(User user) {
+        return 0;
+    }
+
+    @Override
+    public Integer deleteUser(Integer id) {
+        return 0;
+    }
+
+    @Override
+    public Integer UpdateUser(User user) {
+        return 0;
+    }
+
+
 }

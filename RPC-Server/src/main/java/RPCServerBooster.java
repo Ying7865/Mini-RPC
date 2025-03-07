@@ -1,3 +1,5 @@
+import DTO.RPCRequest;
+import DTO.RPCResponse;
 import DTO.User;
 import Service.UserService;
 import ServiceImpl.UserServiceImpl;
@@ -5,6 +7,8 @@ import ServiceImpl.UserServiceImpl;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -24,12 +28,15 @@ public class RPCServerBooster {
                         ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
                         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 
-                        Integer id = inputStream.readInt();
-                        User user = userService.getUserByUserId(id);
-                        System.out.println("[Server Listener] Client Searching User "+id);
-                        outputStream.writeObject(user);
+
+                        RPCRequest request = (RPCRequest) inputStream.readObject();
+                        Method method = userService.getClass().getMethod(request.getRequestMethod(),request.getRequestParamsType());
+
+                        Object invokeResult = method.invoke(userService, request.getRequestParams());
+                        outputStream.writeObject(RPCResponse.success(invokeResult));
                         outputStream.flush();
-                    } catch (IOException e) {
+                    } catch (IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                             InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
 

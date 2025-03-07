@@ -1,4 +1,5 @@
 import DTO.User;
+import RemoteService.UserService;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,23 +8,24 @@ import java.net.Socket;
 
 public class RPCClientBooster {
     public static void main(String[] args) {
-        try {
-            Socket socket = new Socket("127.0.0.1",8808);
-            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-
-            //Send UserId 1 to Server
-            outputStream.writeInt(1);
-            outputStream.flush();
-            //Server checking Data...
-
-            User user = (User) inputStream.readObject();
-            System.out.println(user);
+        RPCRequestProxy proxy = new RPCRequestProxy("127.0.0.1",8808);
+        UserService remoteUserService = proxy.getProxy(UserService.class);
+        User user = remoteUserService.getUserByUserId(1);
+        System.out.println("[Client] Search User successfully: User " + user);
 
 
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("[Client Exception] Exception occur");
+        User user2 = User.builder().userAge(1).userID(1).userName("EE Bond").userRole("God Man").build();
+
+        Integer deleteResult = remoteUserService.deleteUser(1);
+        if (deleteResult == 1){
+            System.out.println("[Client] Delete User successfully: User " + user);
         }
+
+        Integer insertResult = remoteUserService.insertUser(user2);
+        if (insertResult == 1){
+            System.out.println("[Client] Insert User successfully");
+        }
+
+
     }
 }
