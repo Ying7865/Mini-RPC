@@ -21,10 +21,11 @@ public class RPCRequestProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         RPCRequest request = RPCRequest.builder()
-                .requestInterface(method.getDeclaringClass().getName())
+                .requestInterface(method.getDeclaringClass().getSimpleName())
                 .requestMethod(method.getName())
                 .requestParamsType(method.getParameterTypes())
                 .requestParams(args).build();
+        System.out.println("[Client] Request: " + request);
         RPCResponse response = CommunicationCenter.sendRequest(host,port,request);
         return response.getResponseResult();
     }

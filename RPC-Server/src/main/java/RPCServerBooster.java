@@ -1,51 +1,32 @@
-import DTO.RPCRequest;
-import DTO.RPCResponse;
-import DTO.User;
-import Service.UserService;
-import ServiceImpl.UserServiceImpl;
-
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class RPCServerBooster {
-    public static void main(String[] args) {
-        UserService userService = new UserServiceImpl();
-        try{
-            ServerSocket serverSocket = new ServerSocket(8808);
-            System.out.println("[Server Listener] Server Boot!");
-            //using While to implement the BIO function;
+public class RPCServerBooster implements RPCServer{
+
+    private ServiceMap serviceMap;
+
+    public RPCServerBooster(ServiceMap serviceMap){
+        this.serviceMap = serviceMap;
+    }
+
+    @Override
+    public void start(int port) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(port);
+            //Server Boot
             while(true){
-                Socket socket = serverSocket.accept();
-                System.out.println("[Server Listener] Socket Established");
-                new Thread(()->{
-
-                    try {
-                        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-                        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-
-
-                        RPCRequest request = (RPCRequest) inputStream.readObject();
-                        Method method = userService.getClass().getMethod(request.getRequestMethod(),request.getRequestParamsType());
-
-                        Object invokeResult = method.invoke(userService, request.getRequestParams());
-                        outputStream.writeObject(RPCResponse.success(invokeResult));
-                        outputStream.flush();
-                    } catch (IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-                             InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }).start();
+                System.out.println("[Server] Start to monitor the request......");
+                Socket accept = serverSocket.accept();
+                new Thread(new MonitorThread(accept,serviceMap)).start();
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("[Exception] IO Exception occur!!!");
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void stop() {
+
     }
 }
