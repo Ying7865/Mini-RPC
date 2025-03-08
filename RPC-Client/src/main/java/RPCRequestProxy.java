@@ -1,6 +1,7 @@
 import DTO.RPCRequest;
 import DTO.RPCResponse;
 import lombok.AllArgsConstructor;
+import RPCRequest.*;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -8,9 +9,7 @@ import java.lang.reflect.Proxy;
 
 @AllArgsConstructor
 public class RPCRequestProxy implements InvocationHandler {
-    // Should be included the target service address.
-    private String host;
-    private int port;
+    private RPCClient client;
 
     <T> T getProxy(Class<T> clazz){
         Object object = Proxy.newProxyInstance(clazz.getClassLoader(),new Class[]{clazz},this);
@@ -26,7 +25,7 @@ public class RPCRequestProxy implements InvocationHandler {
                 .requestParamsType(method.getParameterTypes())
                 .requestParams(args).build();
         System.out.println("[Client] Request: " + request);
-        RPCResponse response = CommunicationCenter.sendRequest(host,port,request);
+        RPCResponse response = client.sendRequest(request);
         return response.getResponseResult();
     }
 }

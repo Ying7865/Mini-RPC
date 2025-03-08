@@ -1,4 +1,6 @@
 import DTO.User;
+import RPCRequest.RPCClient;
+import RPCRequest.SimpleRPCClient;
 import RemoteService.UserService;
 
 import java.io.IOException;
@@ -8,7 +10,8 @@ import java.net.Socket;
 
 public class RPCClientBooster {
     public static void main(String[] args) {
-        RPCRequestProxy proxy = new RPCRequestProxy("127.0.0.1",8808);
+        RPCClient client = new SimpleRPCClient("127.0.0.1",8808);
+        RPCRequestProxy proxy = new RPCRequestProxy(client);
         UserService remoteUserService = proxy.getProxy(UserService.class);
         User user = remoteUserService.getUserByUserId(1);
         System.out.println("[Client] Search User successfully: User " + user);
