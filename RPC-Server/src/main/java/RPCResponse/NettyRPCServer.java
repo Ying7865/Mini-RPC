@@ -23,7 +23,9 @@ public class NettyRPCServer implements RPCServer {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
                     .childHandler(new NettyRPCServerInitializer(serviceMap));
+            System.out.println("[Netty RPC Server] Binding NettyRPCServer Initializer");
             ChannelFuture future = bootstrap.bind(port).sync();
+            System.out.println("[Netty RPC Server] Listening to port: " + port);
             future.channel().closeFuture().sync();
 
         } catch (InterruptedException e) {

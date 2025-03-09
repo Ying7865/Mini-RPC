@@ -44,10 +44,12 @@ public class NettyRPCClient implements RPCClient {
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             Channel channel = channelFuture.channel();
 
+            System.out.println("[Client] Connect Server successfully");
             channel.writeAndFlush(request);
+            System.out.println("[Client] Send message successfully and waiting for response...");
             channel.closeFuture().sync();
             // Should not get the result by Synchronize. Still is BIO.
-
+            System.out.println("[Client] Get response!!!");
             AttributeKey<RPCResponse> key = AttributeKey.valueOf("RPCResponse");
             RPCResponse response = (RPCResponse) channel.attr(key).get();
 
