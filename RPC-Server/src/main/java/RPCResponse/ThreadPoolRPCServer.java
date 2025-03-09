@@ -1,3 +1,5 @@
+package RPCResponse;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -5,12 +7,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class ThreadPoolRPCServerBooster implements RPCServer{
+public class ThreadPoolRPCServer implements RPCServer{
     private final ThreadPoolExecutor threadPool;
     private ServiceMap serviceMap;
 
     //Default ThreadPool Creating.
-    ThreadPoolRPCServerBooster(ServiceMap serviceMap) {
+    public ThreadPoolRPCServer(ServiceMap serviceMap) {
         this.serviceMap = serviceMap;
         threadPool = new ThreadPoolExecutor(3
                 , 6
@@ -21,7 +23,7 @@ public class ThreadPoolRPCServerBooster implements RPCServer{
     }
 
     //Should be Exiting a Constructor that could customize the Thread size. (To be continued...)
-    // ThreadPoolRPCServerBooster(... ... ...)
+    // RPCResponse.ThreadPoolRPCServerBooster(... ... ...)
 
 
     @Override

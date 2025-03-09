@@ -1,3 +1,5 @@
+package RemoteService;
+
 import DTO.RPCRequest;
 import DTO.RPCResponse;
 import lombok.AllArgsConstructor;
@@ -11,7 +13,7 @@ import java.lang.reflect.Proxy;
 public class RPCRequestProxy implements InvocationHandler {
     private RPCClient client;
 
-    <T> T getProxy(Class<T> clazz){
+    public <T> T getProxy(Class<T> clazz){
         Object object = Proxy.newProxyInstance(clazz.getClassLoader(),new Class[]{clazz},this);
         return (T)object;
     }

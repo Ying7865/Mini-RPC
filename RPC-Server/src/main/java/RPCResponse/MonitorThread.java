@@ -1,3 +1,5 @@
+package RPCResponse;
+
 import DTO.RPCRequest;
 import DTO.RPCResponse;
 
