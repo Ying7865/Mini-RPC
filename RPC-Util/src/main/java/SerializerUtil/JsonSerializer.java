@@ -38,8 +38,12 @@ public class JsonSerializer implements Serializer {
 
             for(int i = 0; i < objects.length; i++){
                 Class<?> paramsType = request.getRequestParamsType()[i];
+                System.out.println("[Serialize Process] Try to map \"" +paramsType +"\" to \"" + request.getRequestParams()[i].getClass() + "\"");
                 if (!paramsType.isAssignableFrom(request.getRequestParams()[i].getClass())){
+                    //If current class not match the specific class. Try to Parse it to specific class.
                     objects[i] = JSONObject.toJavaObject((JSONObject) request.getRequestParams()[i],request.getRequestParamsType()[i]);
+                    System.out.println("[Serialize Process] Final class: " +objects[i].getClass().getSimpleName());
+
                 }else{
                     objects[i] = request.getRequestParams()[i];
                 }
