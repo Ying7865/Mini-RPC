@@ -34,7 +34,9 @@ public class ZooKeeperServiceRegister implements ServiceRegister{
             // Template: UserService/127.0.0.1:8808
             String servicePath = "/" + serviceName + "/" + serviceAddress.getHostName() + serviceAddress.getPort();
             // Due to the service address is dynamic, so we wouldn't create it as an eternal node
-            register.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath);
+            if (register.checkExists().forPath(servicePath) == null) {
+                register.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -44,9 +46,16 @@ public class ZooKeeperServiceRegister implements ServiceRegister{
     public InetSocketAddress serviceDiscovery(String serviceName) {
         try {
             List<String> children = register.getChildren().forPath("/" + serviceName);
-            String children1 = children.get(0); //get first children.
-            String[] splitIP = children1.split(":");
-            return new InetSocketAddress(splitIP[0],Integer.parseInt(splitIP[1]));
+            String children1 = children.get(0); //get firs
+            // t children.
+            if (children1.startsWith("host.docker.internal")){
+                return new InetSocketAddress("127.0.0.1", 8808);
+            }else{
+                String[] splitIP = children1.split(":");
+                System.out.println(splitIP);
+                return new InetSocketAddress(splitIP[0],Integer.parseInt(splitIP[1]));
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

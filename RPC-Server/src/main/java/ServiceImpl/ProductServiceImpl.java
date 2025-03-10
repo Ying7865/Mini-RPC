@@ -6,7 +6,7 @@ import Service.ProductService;
 public class ProductServiceImpl implements ProductService {
 
     @Override
-    public Product searchProduct(int id) {
+    public Product searchProduct(Integer id) {
         System.out.println("[Server] User query the Product");
         return Product.builder().productName("GG Milk").productId(1).merchantId(1).build();
     }
