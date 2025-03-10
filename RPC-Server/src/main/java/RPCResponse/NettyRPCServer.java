@@ -6,6 +6,11 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+
 public class NettyRPCServer implements RPCServer {
     private ServiceMap serviceMap;
 
@@ -25,10 +30,12 @@ public class NettyRPCServer implements RPCServer {
                     .childHandler(new NettyRPCServerInitializer(serviceMap));
             System.out.println("[Netty RPC Server] Binding NettyRPCServer Initializer");
             ChannelFuture future = bootstrap.bind(port).sync();
+            InetAddress address = InetAddress.getLocalHost();
+            serviceMap.registerService(address.getHostAddress(), port);
             System.out.println("[Netty RPC Server] Listening to port: " + port);
             future.channel().closeFuture().sync();
 
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | UnknownHostException e) {
             throw new RuntimeException(e);
         }
     }

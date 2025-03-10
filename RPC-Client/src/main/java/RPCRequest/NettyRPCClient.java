@@ -2,6 +2,7 @@ package RPCRequest;
 
 import DTO.RPCRequest;
 import DTO.RPCResponse;
+import RegisterUtil.ZooKeeperServiceRegister;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -10,6 +11,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
+
+import java.net.InetSocketAddress;
 
 /**
  * First, we should construct the framework of Netty channel:
@@ -22,12 +25,10 @@ public class NettyRPCClient implements RPCClient {
 
     private static final EventLoopGroup eventLoopGroup;
     private static final Bootstrap bootstrap;
-    private String host;
-    private int port;
+    private ZooKeeperServiceRegister serviceRegister;
 
-    public NettyRPCClient(String host, int port){
-        this.host = host;
-        this.port = port;
+    public NettyRPCClient(){
+        serviceRegister = new ZooKeeperServiceRegister();
     }
 
     static{
@@ -41,7 +42,10 @@ public class NettyRPCClient implements RPCClient {
     @Override
     public RPCResponse sendRequest(RPCRequest request) {
         try {
-            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+            InetSocketAddress serviceAddress = serviceRegister.serviceDiscovery(request.getRequestInterface());
+            System.out.println("[Client] request Interface: "+request.getRequestInterface());
+            System.out.println(serviceAddress);
+            ChannelFuture channelFuture = bootstrap.connect(serviceAddress.getHostName(), serviceAddress.getPort()).sync();
             Channel channel = channelFuture.channel();
 
             System.out.println("[Client] Connect Server successfully");

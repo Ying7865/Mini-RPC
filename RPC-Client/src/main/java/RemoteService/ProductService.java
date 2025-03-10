@@ -1,5 +1,4 @@
-package Service;
-
+package RemoteService;
 
 import DTO.Product;
 
