@@ -1,5 +1,7 @@
 package RegisterUtil;
 
+import loadbalance.LoadBalancer;
+import loadbalance.RandomLoadBalancer;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -8,12 +10,15 @@ import org.apache.zookeeper.CreateMode;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Random;
 
 public class ZooKeeperServiceRegister implements ServiceRegister{
     // curator Client for register feature
     private CuratorFramework register;
 
     private static final String ROOT_PATH = "MiniRPC";
+
+    private LoadBalancer loadBalancer = new RandomLoadBalancer();
 
     //ZookeeperRegister initialize function. initial the connection when class creating.
     //The basic Zookeeper create process!.
@@ -46,12 +51,13 @@ public class ZooKeeperServiceRegister implements ServiceRegister{
     public InetSocketAddress serviceDiscovery(String serviceName) {
         try {
             List<String> children = register.getChildren().forPath("/" + serviceName);
-            String children1 = children.get(0); //get firs
+            String targetServer = loadBalancer.balance(children); //get firs
             // t children.
-            if (children1.startsWith("host.docker.internal")){
-                return new InetSocketAddress("127.0.0.1", 8808);
+            if (targetServer.startsWith("host.docker.internal")){
+                System.out.println("[Service Register] detect it is localhost. transfer to 127.0.0.1");
+                return new InetSocketAddress("127.0.0.1", Integer.parseInt(targetServer.substring(targetServer.length()-4,targetServer.length())));
             }else{
-                String[] splitIP = children1.split(":");
+                String[] splitIP = targetServer.split(":");
                 System.out.println(splitIP);
                 return new InetSocketAddress(splitIP[0],Integer.parseInt(splitIP[1]));
             }

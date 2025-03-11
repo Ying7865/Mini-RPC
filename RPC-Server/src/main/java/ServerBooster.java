@@ -23,8 +23,10 @@ public class ServerBooster {
 
 //        RPCServer rpcServer = new ThreadPoolRPCServer(serviceMap);
         RPCServer rpcServer = new NettyRPCServer(serviceMap);
-        rpcServer.start(8808);
-
+        Integer port = Integer.parseInt(System.getProperty("port"));
+        int i = port.intValue();
+        System.out.println(i);
+        rpcServer.start(i);
 
     }
 }
