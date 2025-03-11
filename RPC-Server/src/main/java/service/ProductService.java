@@ -1,4 +1,5 @@
-package RemoteService;
+package service;
+
 
 import dto.Product;
 

@@ -1,9 +1,7 @@
-import DTO.Product;
-import DTO.User;
-import RPCRequest.NettyRPCClient;
-import RPCRequest.RPCClient;
-import RPCRequest.SimpleRPCClient;
-import RemoteService.RPCRequestProxy;
+import dto.User;
+import client.NettyRPCClient;
+import client.RPCClient;
+import client.RPCRequestProxy;
 import RemoteService.*;
 
 public class RPCClientBooster {

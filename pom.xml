@@ -46,7 +46,14 @@
             <artifactId>curator-recipes</artifactId>
             <version>5.1.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.177</version>
+        </dependency>
     </dependencies>
+
 
     <modules>
         <module>RPC-Client</module>

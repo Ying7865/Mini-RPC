@@ -1,6 +1,6 @@
 package RemoteService;
 
-import DTO.User;
+import dto.User;
 
 public interface UserService {
     User getUserByUserId(Integer id);
